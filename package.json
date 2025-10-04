@@ -38,6 +38,7 @@
     "prettier": "3.6.2",
     "tailwindcss": "^4.1.14",
     "vite": "^7.1.7",
-    "vite-plugin-vue-devtools": "^8.0.2"
+    "vite-plugin-vue-devtools": "^8.0.2",
+    "vue-eslint-parser": "^10.2.0"
   }
 }
