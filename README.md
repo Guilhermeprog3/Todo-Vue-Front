@@ -59,10 +59,11 @@ instalado:\
 - Versão recomendada: **\^20.19.0 \|\| \>=22.12.0** (especificada no
 `package.json`).
 
-⚠️ **Importante:** Este projeto é apenas o **frontend**. Você precisará
-da API backend rodando em:\
-👉 <http://localhost:8000>
+⚠️ **Importante:** Este projeto é apenas o **frontend**. A API está rodando em:\
+👉 <https://todo-vue-back-api.onrender.com>
 
+⚠️ **Importante:** Consulte a documentação da API em\
+👉 <https://todo-vue-back-api.onrender.com/docs>
 ------------------------------------------------------------------------
 
 ## 🚀 Instalação e Execução

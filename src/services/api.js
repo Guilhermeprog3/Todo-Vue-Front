@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: 'https://todo-vue-back-api.onrender.com',
 });
 
 api.interceptors.request.use(
