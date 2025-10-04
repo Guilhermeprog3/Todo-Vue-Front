@@ -70,7 +70,7 @@ da API backend rodando em:\
 ### 1️⃣ Clonar o repositório
 
 ``` bash
-git clone <(https://github.com/Guilhermeprog3/Todo-Vue-Front.git)>
+git clone https://github.com/Guilhermeprog3/Todo-Vue-Front.git
 cd todo-vue-front
 ```
 
