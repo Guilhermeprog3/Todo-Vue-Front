@@ -3,19 +3,27 @@ import { ref, onMounted } from 'vue';
 import api from '@/services/api';
 import TaskList from '@/components/TaskList.vue';
 import TaskForm from '@/components/TaskForm.vue';
+import ErrorMessage from '@/components/ErrorMessage.vue';
 
 const tasks = ref([]);
 const loading = ref(true);
+const error = ref(null);
 const showTaskForm = ref(false);
 const editingTask = ref(null);
 
 const fetchTasks = async () => {
   try {
     loading.value = true;
+    error.value = null;
     const response = await api.get('/tasks/');
     tasks.value = response.data;
-  } catch (error) {
-    console.error('Erro ao buscar tarefas:', error);
+  } catch (err) {
+    if (err.code === 'ECONNABORTED' || !err.response) {
+      error.value = 'O servidor está demorando para responder. Ele pode estar "despertando". Por favor, tente novamente em 1 minuto.';
+    } else {
+      error.value = 'Erro ao buscar tarefas.';
+    }
+    console.error('Erro ao buscar tarefas:', err);
   } finally {
     loading.value = false;
   }
@@ -64,13 +72,13 @@ const handleTaskDelete = async (taskId) => {
 };
 
 const handleTaskToggle = async (taskId) => {
-    try {
-        await api.patch(`/tasks/${taskId}/toggle`);
-        await fetchTasks();
-    } catch (error) {
-        alert('Erro ao mudar status da tarefa.');
-        console.error('Erro ao mudar status da tarefa:', error);
-    }
+  try {
+    await api.patch(`/tasks/${taskId}/toggle`);
+    await fetchTasks();
+  } catch (error) {
+    alert('Erro ao mudar status da tarefa.');
+    console.error('Erro ao mudar status da tarefa:', error);
+  }
 };
 
 onMounted(fetchTasks);
@@ -85,14 +93,16 @@ onMounted(fetchTasks);
       </button>
     </div>
 
+    <ErrorMessage v-if="error" :message="error" />
+
     <div v-if="loading" class="text-center text-gray-600">Carregando tarefas...</div>
-    <div v-else-if="tasks.length === 0" class="text-center text-gray-500 mt-8 border-2 border-dashed border-gray-300 p-8 rounded-lg">
+    <div v-else-if="tasks.length === 0 && !error" class="text-center text-gray-500 mt-8 border-2 border-dashed border-gray-300 p-8 rounded-lg">
       <p class="mb-4">Nenhuma tarefa encontrada. Que tal adicionar uma?</p>
       <button @click="openCreateForm" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-md">Adicionar minha primeira tarefa</button>
     </div>
-    <TaskList 
-      v-else 
-      :tasks="tasks" 
+    <TaskList
+      v-else-if="!error"
+      :tasks="tasks"
       @delete-task="handleTaskDelete"
       @edit-task="openEditForm"
       @toggle-completion="handleTaskToggle"
@@ -104,10 +114,10 @@ onMounted(fetchTasks);
           <h3 class="text-2xl font-bold text-gray-900">{{ editingTask ? 'Editar Tarefa' : 'Nova Tarefa' }}</h3>
           <button @click="closeForm" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>
         </div>
-        <TaskForm 
+        <TaskForm
           :initial-task="editingTask"
-          @submit="handleTaskSubmit" 
-          @cancel="closeForm" 
+          @submit="handleTaskSubmit"
+          @cancel="closeForm"
         />
       </div>
     </div>
